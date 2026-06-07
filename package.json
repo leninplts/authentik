@@ -1,0 +1,17 @@
+{
+  "name": "lyr-auth",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Identity Provider centralizado multi-tenant para admins (Authentik + OIDC SDK + CLI)",
+  "scripts": {
+    "docker:up": "docker compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f docker/docker-compose.yml down",
+    "docker:logs": "docker compose -f docker/docker-compose.yml logs -f",
+    "docker:reset": "docker compose -f docker/docker-compose.yml down -v"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.12.0"
+}

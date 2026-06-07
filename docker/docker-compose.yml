@@ -1,0 +1,66 @@
+services:
+  server:
+    command: server
+    image: ghcr.io/goauthentik/server:2026.5.2
+    container_name: lyr-authentik-server
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${AUTHENTIK_PORT_HTTP:-9000}:9000"
+      - "${AUTHENTIK_PORT_HTTPS:-9443}:9443"
+    volumes:
+      - ./authentik/media:/media
+      - ./authentik/custom-templates:/templates:ro
+      - ./authentik/blueprints:/blueprints:ro
+    shm_size: 512mb
+    healthcheck:
+      test: ["CMD", "ak", "healthcheck"]
+      interval: 30s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    networks:
+      - lyr-auth-net
+    depends_on:
+      - redis
+
+  worker:
+    command: worker
+    image: ghcr.io/goauthentik/server:2026.5.2
+    container_name: lyr-authentik-worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./authentik/media:/media
+      - ./authentik/custom-templates:/templates:ro
+      - ./authentik/blueprints:/blueprints:ro
+      - ./authentik/certs:/certs
+    shm_size: 512mb
+    depends_on:
+      - redis
+      - server
+    networks:
+      - lyr-auth-net
+
+  redis:
+    image: docker.io/library/redis:7-alpine
+    container_name: lyr-authentik-redis
+    restart: unless-stopped
+    command: --save 60 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+    networks:
+      - lyr-auth-net
+
+networks:
+  lyr-auth-net:
+    name: lyr-auth-net
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local

@@ -1,0 +1,17 @@
+# =============================================================================
+# Property Mapping - Tenant slug
+# =============================================================================
+# Agrega el slug del tenant como claim en el id_token y access_token.
+# El SDK lo lee para saber a qué empresa pertenece el usuario autenticado.
+# =============================================================================
+version: 1
+metadata:
+  name: lyr-auth - Tenant slug claim
+entries:
+  - model: authentik_providers_scope_mapping.scope
+    state: present
+    id: scope_lyr_tenant
+    attrs:
+      name: lyr-tenant
+      description: "Slug del tenant al que pertenece el usuario"
+      scope_name: lyr_tenant

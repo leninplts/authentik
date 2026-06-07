@@ -1,0 +1,19 @@
+# =============================================================================
+# Tenant template - lyr-auth
+# =============================================================================
+# Blueprint de ejemplo. Aplicar vía UI (System → Blueprints → Create) o API.
+# Crea un tenant "empresa-piloto" con su dominio y branding.
+# =============================================================================
+version: 1
+metadata:
+  name: Tenant - Empresa Piloto
+entries:
+  - model: authentik_tenants.tenant
+    state: present
+    identifier: empresa-piloto
+    attrs:
+      name: Empresa Piloto
+      default: false
+      description: Tenant piloto para validación inicial
+      branding_title: Empresa Piloto
+      branding_logo: /media/public/default-brand.png

@@ -1,0 +1,14 @@
+node_modules
+dist
+build
+.next
+.turbo
+*.log
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+docker/.env
+docker/authentik/media/
+docker/authentik/certs/

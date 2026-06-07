@@ -1,0 +1,83 @@
+{% extends "authentik/flows/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}
+    {{ brand.branding_title }}
+{% endblock %}
+
+{% block head_extra %}
+    <style>
+        :root {
+            --ak-primary: #2563eb;
+            --ak-primary-hover: #1d4ed8;
+        }
+        .ak-brand-name {
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="pf-c-login">
+    <div class="ak-login-container">
+        <header class="ak-login-header">
+            <h1 class="ak-brand-name">{{ brand.branding_title }}</h1>
+            {% if brand.branding_logo %}
+                <img src="{{ brand.branding_logo }}" alt="logo" class="ak-brand-logo">
+            {% endif %}
+        </header>
+
+        <main class="ak-login-main">
+            <h2 class="pf-c-title pf-m-2xl">
+                {% trans "Iniciar sesión" %}
+            </h2>
+            {% if child %}
+                <p class="pf-c-login__main-header-desc">
+                    {% blocktrans with stage=child.title %}{{ stage }}{% endblocktrans %}
+                </p>
+            {% endif %}
+
+            {% if flow_info.compat_form_name %}
+                <form method="post" class="pf-c-form" action="">
+                    {% csrf_token %}
+                    {% for field in flow_info.compat %}
+                        {% include "authentik/flows/_field.html" %}
+                    {% endfor %}
+                    <div class="pf-c-form__group pf-m-action">
+                        <button type="submit" name="continue" class="pf-c-button pf-m-primary pf-m-block">
+                            {% trans "Continuar" %}
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <form method="post" class="pf-c-form" action="">
+                    {% csrf_token %}
+                    {{ form }}
+                    <div class="ak-stage-actioner">
+                        <button type="submit" name="continue" class="pf-c-button pf-m-primary pf-m-block">
+                            {% trans "Continuar" %}
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+
+            {% if flow_info.allocator %}
+                <p class="pf-c-login__main-footer">
+                    <a href="{% url 'authentik_core:if-user' %}">
+                        {% trans "Need help?" %}
+                    </a>
+                </p>
+            {% endif %}
+        </main>
+
+        <footer class="ak-login-footer">
+            <p>
+                {% trans "Protegido por lyr-auth" %}
+            </p>
+        </footer>
+    </div>
+</div>
+{% endblock %}
