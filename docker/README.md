@@ -8,6 +8,7 @@ Deploy del Identity Provider en Dokploy usando Docker Compose.
 - Dominio apuntando al servidor (ej: `auth.tudominio.com`)
 - TLS configurado (Let's Encrypt vía Dokploy)
 - PostgreSQL accesible desde el servidor (puede ser el contenedor incluido o uno externo)
+- Redis accesible desde el servidor (reutilizamos el existente)
 
 ## Opción A — Postgres externo (recomendado)
 
@@ -35,6 +36,7 @@ Editar `.env` y completar:
 - `AUTHENTIK_POSTGRESQL__HOST`: host del Postgres
 - `AUTHENTIK_POSTGRESQL__USER`, `AUTHENTIK_POSTGRESQL__PASSWORD`
 - `AUTHENTIK_POSTGRESQL__NAME`: `authentik` (o el nombre que le hayas puesto)
+- `AUTHENTIK_REDIS__HOST`: host del Redis existente (formato `redis://host:port` o `host`)
 - `AUTHENTIK_PORT_HTTP` y `AUTHENTIK_PORT_HTTPS`: dejar default salvo necesidad real
 
 ### 3. Levantar en Dokploy
@@ -70,7 +72,7 @@ El sistema te pide crear la contraseña del usuario `akadmin` (superusuario). **
 
 ## Opción B — Postgres incluido (alternativa)
 
-Usar `docker-compose.with-postgres.yml` si querés que el stack sea 100% autocontenido.
+Usar `docker-compose.with-postgres.yml` si querés que el stack sea 100% autocontenido (Postgres solamente, Redis sigue siendo externo).
 
 Pasos iguales pero:
 
@@ -92,7 +94,7 @@ Dokploy puede usar el healthcheck del container (`ak healthcheck`). Si el server
 
 ### Backups
 
-- **Volumen `redis-data`**: cache, se puede perder sin drama
+- **Redis**: se reutiliza el existente, no requiere backup (es cache)
 - **Volumen `authentik/media`**: avatars, logos subidos, branding
 - **DB de Authentik** (Postgres): CRÍTICO, hacer backup diario
 

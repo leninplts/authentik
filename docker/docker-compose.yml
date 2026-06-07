@@ -22,8 +22,6 @@ services:
       timeout: 10s
     networks:
       - lyr-auth-net
-    depends_on:
-      - redis
 
   worker:
     command: worker
@@ -40,27 +38,12 @@ services:
       - ./authentik/blueprints:/blueprints:ro
       - ./authentik/certs:/certs
     shm_size: 512mb
+    networks:
+      - lyr-auth-net
     depends_on:
-      - redis
       - server
-    networks:
-      - lyr-auth-net
-
-  redis:
-    image: docker.io/library/redis:7-alpine
-    container_name: lyr-authentik-redis
-    restart: unless-stopped
-    command: --save 60 1 --loglevel warning
-    volumes:
-      - redis-data:/data
-    networks:
-      - lyr-auth-net
 
 networks:
   lyr-auth-net:
     name: lyr-auth-net
     driver: bridge
-
-volumes:
-  redis-data:
-    driver: local
